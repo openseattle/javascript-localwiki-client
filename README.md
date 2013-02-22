@@ -25,6 +25,7 @@ var wiki = new LocalWikiClient({
 ````
 
 **create a page named test test test**
+````
 wiki.create({
   resource_type: 'page',
   data: {
@@ -35,6 +36,7 @@ wiki.create({
     console.log("created if 201:", response.statusCode)
   }
 })
+````
 
 **get the test test test page**
 ````
@@ -48,6 +50,7 @@ wiki.fetch({
 ````
 
 **update the test test test page**
+````
 wiki.update({
   resource_type: 'page',
   data: {
@@ -58,8 +61,10 @@ wiki.update({
     console.log("updated if 204:", response.statusCode)
   }
 })
+````
 
 **delete the test test test page**
+````
 wiki.delete({
   resource_type: 'page',
   identifier: 'test test test',
@@ -67,6 +72,7 @@ wiki.delete({
     console.log("deleted if 204:", response.statusCode)
   }
 })
+````
 
 **get 5 pages**
 ````
