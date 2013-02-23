@@ -77,7 +77,12 @@ LocalWikiClient.prototype.list = function(options){
   function (error, response, body) {
     if (error && options.error) options.error(error, response, body)
     if (response.statusCode == 200) {
-      if (options.success) return options.success(error, response, body)
+      var data = JSON.parse(body);
+      data.objects.map(function(resource) {
+        var obj = new LocalWikiResource(this, resource.resource_uri);
+        return obj;
+      });
+      if (options.success) return options.success(data, body)
     }
     return response
   })
@@ -106,7 +111,7 @@ LocalWikiClient.prototype.fetch = function(options){
   function (error, response, body) {
     if (error && options.error) options.error(error, response, body)
     if (response.statusCode == 200) {
-      obj.data.body = body;
+      obj.data.body = JSON.parse(body);
       if (options.success) options.success(obj, response)
     }
     return response
