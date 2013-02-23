@@ -36,8 +36,10 @@ options = {
 
 */
 LocalWikiClient.prototype.list = function(options){
+  var resource = options.resource_type || 'page'
+  
   request({
-    url: this.url + options.resource_type + '?' + qs.stringify(options.filters)
+    url: this.url + resource + '?' + qs.stringify(options.filters)
   },
   function (error, response, body) {
     if (error && options.error) options.error(error, response, body)
@@ -61,8 +63,10 @@ options = {
 
 */
 LocalWikiClient.prototype.fetch = function(options){
+  var resource = options.resource_type || 'page'
+  
   request({
-    url: this.url + options.resource_type + '/' + options.identifier
+    url: this.url + resource + '/' + options.identifier
   },
   function (error, response, body) {
     if (error && options.error) options.error(error, response, body)
@@ -86,8 +90,9 @@ options = {
 
 */
 LocalWikiClient.prototype.create = function(options){
+  var resource = options.resource_type || 'page'
   request.post({
-    url: this.url + options.resource_type + '/',
+    url: this.url + resource + '/',
     headers: {
       'Content-Type': 'application/json',
       'Authorization': 'ApiKey ' + this.user + ':' + this.apikey
@@ -118,9 +123,10 @@ options = {
 */
 LocalWikiClient.prototype.update = function(options){
   var identifier = options.identifier || options.data.name
+  var resource = options.resource_type || 'page'
   
   request.put({
-    url: this.url + options.resource_type + '/' + identifier,
+    url: this.url + resource + '/' + identifier,
     headers: {
       'Content-Type': 'application/json',
       'Authorization': 'ApiKey ' + this.user + ':' + this.apikey
@@ -151,8 +157,10 @@ options = {
 
 */
 LocalWikiClient.prototype.delete = function(options){
+  var resource = options.resource_type || 'page'
+  
   request.del({
-    url: this.url + options.resource_type + '/' + options.identifier,
+    url: this.url + resource + '/' + options.identifier,
     headers: {
       'Content-Type': 'application/json',
       'Authorization': 'ApiKey ' + this.user + ':' + this.apikey
