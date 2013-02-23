@@ -3,6 +3,25 @@ var qs = require('querystring')
 
 module.exports = LocalWikiClient
 
+
+/*
+* Representation of a single Wiki Resource.
+*
+* lw.fetch({
+*   resource_type: 'page',
+*   identifier: 'test test',
+*   success: function(resource) {
+*     console.log(resource)
+*   }
+* })
+*/
+function LocalWikiResource(client, identifier) {
+  this.client = client;
+  this.identifier = identifier;
+  this.data = {};
+}
+
+
 /*
 * Initialize
 
@@ -24,6 +43,20 @@ function LocalWikiClient(options){
 
 
 /*
+* Types of resources understood by LocalWiki.
+*/
+LocalWikiClient.Type = {
+  FILE: {name: 'file', versioned: true},
+  MAP: {name: 'map', versioned: true},
+  PAGE: {name: 'page', versioned: true, tagged: true},
+  REDIRECT: {name: 'redirect', versioned: true},
+  SITE: {name: 'site'},
+  TAG: {name: 'tag'},
+  USER: {name: 'user'}
+}
+
+
+/*
 * GET
 * request a list of resources
 
@@ -36,10 +69,10 @@ options = {
 
 */
 LocalWikiClient.prototype.list = function(options){
-  var resource = options.resource_type || 'page'
+  var type = options.resource_type || LocalWikiClient.Type.PAGE;
   
   request({
-    url: this.url + resource + '?' + qs.stringify(options.filters)
+    url: this.url + type.name + '?' + qs.stringify(options.filters)
   },
   function (error, response, body) {
     if (error && options.error) options.error(error, response, body)
@@ -63,18 +96,23 @@ options = {
 
 */
 LocalWikiClient.prototype.fetch = function(options){
-  var resource = options.resource_type || 'page'
-  
+  var type = options.resource_type || LocalWikiClient.Type.PAGE;
+  var identifier = options.identifier;
+  var obj = new LocalWikiResource(this, identifier);
+
   request({
-    url: this.url + resource + '/' + options.identifier
+    url: this.url + type.name + '/' + identifier
   },
   function (error, response, body) {
     if (error && options.error) options.error(error, response, body)
     if (response.statusCode == 200) {
-      if (options.success) options.success(error, response, body)
+      obj.data.body = body;
+      if (options.success) options.success(obj, response)
     }
     return response
-  })
+  });
+
+  return obj;
 }
 
 /*
