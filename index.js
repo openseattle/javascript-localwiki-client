@@ -25,16 +25,30 @@ function LocalWikiResource(client, type, identifier) {
 
 /*
 * Update a resource to reflect local state.
+* client.fetch({
+*   identifier:'test',
+*   success: function(rsrc) {
+*     rsrc.data.content += "test";
+*     rsrc.update();
+*   }
+* })
 */
 LocalWikiResource.prototype.update = function(success, failure) {
+  var self = this;
   request.put({
     url: this.client.url + this.type.name + '/' + this.identifier,
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': 'ApiKey ' + this.user + ':' + this.apikey
+      'Authorization': 'ApiKey ' + this.client.user + ':' + this.client.apikey
     },
-    body: JSON.stringify(options.data)
+    body: JSON.stringify(this.data)
   },
+  function (error, response, body) {
+    if (error && options.error) failure(error, response, body);
+    if (response.statusCode == 204) {
+      success(self, response, body);
+    }
+  });
 }
 
 
