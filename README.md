@@ -24,65 +24,59 @@ var wiki = new LocalWikiClient({
 })
 ````
 
-**create a page named test test test**
+**create a page named Waterside Park**
 ````
 wiki.create({
-  resource_type: 'page',
+  resource_type: LocalWikiClient.Type.PAGE,
   data: {
-    'name': "test test test",
-    'content': "making a test page."
+    'name': "Waterside Park",
+    'content': "A simple test page."
   },
-  success: function(error, response, body) {
-    console.log("created if 201:", response.statusCode)
+  success: function(resource) {
+    console.log("Created new page", resource.identifier)
   }
 })
 ````
 
-**get the test test test page**
+**get a resource**
 ````
 wiki.fetch({
-  resource_type: 'page',
-  identifier: 'test test test',
-  success: function(error, response, body) {
-    console.log("page fetch results: ", body)
+  identifier: 'WatersidePark',
+  success: function(resource) {
+    console.log("page data: ", body.data.content)
   }
 })
 ````
 
-**update the test test test page**
+**update a page**
 ````
-wiki.update({
-  resource_type: 'page',
-  data: {
-    'name': "test test test",
-    'content': "making a test page. updated a test page."
-  },
-  success: function(error, response, body) {
-    console.log("updated if 204:", response.statusCode)
+wiki.fetch({
+  identifier: 'WatersidePark',
+  success: function(resource) {
+    resource.data.content += "<br /> Updated at " + new Date()
+    resource.update(function() {
+      console.log("Success");
+    })
   }
 })
 ````
 
-**delete the test test test page**
+**delete a page**
 ````
-wiki.delete({
-  resource_type: 'page',
-  identifier: 'test test test',
-  success: function(error, response, body) {
-    console.log("deleted if 204:", response.statusCode)
-  }
-})
+resource.delete(function() {
+  console.log("resource deleted.");
+});
 ````
 
-**get 5 pages**
+**list multiple resources**
 ````
 wiki.list({
-  resource_type: 'page',
+  resource_type: LocalWikiClient.Type.PAGE,
   filters: {
     limit: 5
   },
-  success: function(error, response, body) {
-    console.log("page list results: ", body)
+  success: function(items) {
+    console.log("found " + items.length + " matching pages.")
   }
 })
 ````
