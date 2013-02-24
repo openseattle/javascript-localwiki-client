@@ -9,7 +9,7 @@ var lw = new LocalWikiClient({
 // delete the test test test page
 lw.delete({
   identifier: 'test',
-  success: function(error, response, body) {
-    console.log("deleted if 204:", response.statusCode)
+  success: function(resource, response, body) {
+    console.log("deleted " + resource.identifier)
   }
 })

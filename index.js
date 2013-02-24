@@ -95,7 +95,7 @@ LocalWikiResource.prototype.delete = function(success, failure) {
 */
 function LocalWikiClient(options){
   if (!options) options = {}
-  this.url = options.url + '/api/'
+  this.url = options.url + (options.url.match('/$').length ? '' : '/') + 'api/'
   this.user = options.user
   this.apikey = options.apikey
 }
@@ -221,12 +221,12 @@ LocalWikiClient.prototype.create = function(options){
     if (error && options.error) options.error(error, response, body)
     if (response.statusCode == 201) {
       var location = response.headers['location']
-      var resource = new LocalWikiResource(this, "/api/" + location.split("this.url")[1])
+      var resource = new LocalWikiResource(this, "/api/" + location.split(this.url)[1])
       resource.data = options.data
       if (options.success) options.success(resource, response, body)
     }
     return response
-  })
+  }.bind(this))
 }
 
 
