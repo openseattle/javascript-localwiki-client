@@ -44,8 +44,38 @@ LocalWikiResource.prototype.update = function(success, failure) {
     body: JSON.stringify(this.data)
   },
   function (error, response, body) {
-    if (error && options.error) failure(error, response, body);
-    if (response.statusCode == 204) {
+    if (error && options.error && failure) failure(error, response, body);
+    if (response.statusCode == 204 && success) {
+      success(self, response, body);
+    }
+  });
+}
+
+
+/*
+* Delete a resource from the wiki.
+* client.list({
+*   success: function(rsrcs) {
+*     rsrcs.map(function(rsrc) {
+*       if (rsrc.content.indexOf("Delete This Page") !== false) {
+*         rsrc.delete();
+*       }
+*     });
+*   }
+* })
+*/
+LocalWikiResource.prototype.delete = function(success, failure) {
+  var self = this;
+  request.del({
+    url: this.client.url + this.type.name + '/' + this.identifier,
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'ApiKey ' + this.client.user + ':' + this.client.apikey
+    }
+  },
+  function (error, response, body) {
+    if (error && options.error && failure) failure(error, response, body);
+    if (response.statusCode == 204 && success) {
       success(self, response, body);
     }
   });
@@ -194,73 +224,4 @@ LocalWikiClient.prototype.create = function(options){
     }
     return response
   })
-}
-
-/*
-* PUT
-* update a resource
-
-options = {
-  resource_type: "",
-  identifier: "",
-  data: {},
-  success: function(){},
-  error: function(){}
-}
-
-*/
-LocalWikiClient.prototype.update = function(options){
-  var identifier = options.identifier || options.data.name
-  var resource = options.resource_type || 'page'
-  
-  request.put({
-    url: this.url + resource + '/' + identifier,
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': 'ApiKey ' + this.user + ':' + this.apikey
-    },
-    body: JSON.stringify(options.data)
-  },
-  function (error, response, body) {
-    if (error && options.error) options.error(error, response, body)
-    if (response.statusCode == 204) {
-      if (options.success) options.success(error, response, body)
-    }
-    return response
-
-  })
-
-}
-
-/*
-* DELETE
-* delete a resource
-
-options = {
-  resource_type: "",
-  identifier: "",
-  success: function(){},
-  error: function(){}
-}
-
-*/
-LocalWikiClient.prototype.delete = function(options){
-  var resource = options.resource_type || 'page'
-  
-  request.del({
-    url: this.url + resource + '/' + options.identifier,
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': 'ApiKey ' + this.user + ':' + this.apikey
-    }
-  },
-  function (error, response, body) {
-    if (error && options.error) options.error(error, response, body)
-    if (response.statusCode == 204) {
-      if (options.success) options.success(error, response, body)
-    }
-    return response
-
-  })
-  
 }
