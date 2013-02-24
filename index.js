@@ -220,7 +220,8 @@ LocalWikiClient.prototype.create = function(options){
   function (error, response, body) {
     if (error && options.error) options.error(error, response, body)
     if (response.statusCode == 201) {
-      var resource = new LocalWikiResource(this, type, options.identifier)
+      var location = response.headers['location']
+      var resource = new LocalWikiResource(this, "/api/" + location.split("this.url")[1])
       resource.data = options.data
       if (options.success) options.success(resource, response, body)
     }
