@@ -208,9 +208,9 @@ options = {
 
 */
 LocalWikiClient.prototype.create = function(options){
-  var resource = options.resource_type || LocalWikiClient.Type.PAGE;
+  var type = options.resource_type || LocalWikiClient.Type.PAGE;
   request.post({
-    url: this.url + resource.name + '/',
+    url: this.url + type.name + '/' + options.identifier,
     headers: {
       'Content-Type': 'application/json',
       'Authorization': 'ApiKey ' + this.user + ':' + this.apikey
@@ -220,7 +220,9 @@ LocalWikiClient.prototype.create = function(options){
   function (error, response, body) {
     if (error && options.error) options.error(error, response, body)
     if (response.statusCode == 201) {
-      if (options.success) options.success(error, response, body)
+      var resource = new LocalWikiResource(this, type, options.identifier)
+      resource.data = options.data
+      if (options.success) options.success(resource, response, body)
     }
     return response
   })
