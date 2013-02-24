@@ -14,7 +14,7 @@ function LocalWikiResource(client, type, identifier) {
   this.identifier = identifier;
 
   // Allow construction of a resource resource_url specified rather than type and identifier.
-  if (!this.identifier && this.type.indexOf("/api") === 0) {
+  if (!this.identifier && typeof this.type === "string" && this.type.indexOf("/api") === 0) {
     this.identifier = this.type.substr(this.type.indexOf('/', 5) + 1);
     var type = this.type.split("/")[2];
     this.type = LocalWikiClient.Type.of(type);
@@ -210,7 +210,7 @@ options = {
 LocalWikiClient.prototype.create = function(options){
   var type = options.resource_type || LocalWikiClient.Type.PAGE;
   request.post({
-    url: this.url + type.name + '/' + options.identifier,
+    url: this.url + type.name + '/',
     headers: {
       'Content-Type': 'application/json',
       'Authorization': 'ApiKey ' + this.user + ':' + this.apikey

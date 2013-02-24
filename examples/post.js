@@ -14,6 +14,6 @@ lw.create({
     'content': "Weird Animal."
   },
   success: function(resource) {
-    console.log("created if 201:", response.statusCode)
+    console.log("Resource Created", resource)
   }
 })
