@@ -225,3 +225,22 @@ LocalWikiClient.prototype.create = function(options){
     return response
   })
 }
+
+
+/*
+* DELETE
+* Remove a single resource by its identifier.
+*
+* options = {
+*   resource_type: LocalWikiClient.Type,
+*   identifier: "",
+*   success: function(){},
+*   error: function(){}
+* }
+*
+*/
+LocalWikiClient.prototype.delete = function(options) {
+  var type = options.resource_type || LocalWikiClient.Type.PAGE;
+  var resource = new LocalWikiResource(this, type, options.identifier);
+  resource.delete(options.success, options.error);
+}
