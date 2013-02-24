@@ -152,12 +152,12 @@ LocalWikiClient.prototype.list = function(options){
     if (error && options.error) options.error(error, response, body)
     if (response.statusCode == 200) {
       var data = JSON.parse(body);
-      data.objects.map(function(resource) {
+      var objects = data.objects.map(function(resource) {
         var obj = new LocalWikiResource(self, resource.resource_uri);
         obj.data = resource;
         return obj;
       });
-      if (options.success) return options.success(data, body)
+      if (options.success) return options.success(objects, data)
     }
     return response
   })
