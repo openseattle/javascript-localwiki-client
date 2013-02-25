@@ -95,7 +95,7 @@ LocalWikiResource.prototype.delete = function(success, failure) {
 */
 function LocalWikiClient(options){
   if (!options) options = {}
-  this.url = options.url + (options.url.match('/$').length ? '' : '/') + 'api/'
+  this.url = options.url + (options.url.match('/$') ? '' : '/') + 'api/'
   this.user = options.user
   this.apikey = options.apikey
 }
