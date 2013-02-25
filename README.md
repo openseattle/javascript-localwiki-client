@@ -43,7 +43,7 @@ wiki.create({
 wiki.fetch({
   identifier: 'WatersidePark',
   success: function(resource) {
-    console.log("page data: ", body.data.content)
+    console.log("page data: ", resource.data.content)
   }
 })
 ````
