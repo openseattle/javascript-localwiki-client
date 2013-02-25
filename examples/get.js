@@ -10,20 +10,21 @@ var lw = new LocalWikiClient({
 
 // get the test test test page
 lw.fetch({
-  resource_type: 'page',
-  identifier: 'test test test',
-  success: function(error, response, body) {
-    console.log("page fetch results: ", body)
+  identifier: 'Help',
+  success: function(resource) {
+    console.log("page fetch data: ", resource.data.content)
   }
 })
 
 // get 5 pages
 lw.list({
-  resource_type: 'page',
+  resource_type: LocalWikiClient.Type.PAGE,
   filters: {
     limit: 5
   },
-  success: function(error, response, body) {
-    console.log("page list results: ", body)
+  success: function(items) {
+    items.map(function(item) {
+      console.log("Top Page: " + item.data.slug)
+    });
   }
 })

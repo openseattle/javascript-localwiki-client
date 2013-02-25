@@ -8,12 +8,12 @@ var lw = new LocalWikiClient({
 
 // create a page named test test test
 lw.create({
-  resource_type: 'page',
+  resource_type: LocalWikiClient.Type.PAGE,
   data: {
-    'name': "test test test",
-    'content': "making a test page."
+    'name': "Emu",
+    'content': "Weird Animal."
   },
-  success: function(error, response, body) {
-    console.log("created if 201:", response.statusCode)
+  success: function(resource) {
+    console.log("Resource Created: ", resource.identifier)
   }
 })
