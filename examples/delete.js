@@ -8,9 +8,8 @@ var lw = new LocalWikiClient({
 
 // delete the test test test page
 lw.delete({
-  resource_type: 'page',
-  identifier: 'test test test',
-  success: function(error, response, body) {
-    console.log("deleted if 204:", response.statusCode)
+  identifier: 'test',
+  success: function(resource, response, body) {
+    console.log("deleted " + resource.identifier)
   }
 })
