@@ -7,7 +7,7 @@
     "url": "https://github.com/codeforseattle/node-localwiki-client.git" 
   },
   "dependencies": {
-    "request": "~>2.14.0"
+    "request": "~2.25.0"
   },
   "devDependencies": {
   },
