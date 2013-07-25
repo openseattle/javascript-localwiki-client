@@ -1,7 +1,7 @@
 var LocalWikiClient = require("../index.js")
 
 var lw = new LocalWikiClient({
-  url: 'YOUR_LOCALWIKI_URL' // like http://seattlewiki.net or https://sfwiki.org
+  url: 'http://seattlewiki.net' // like http://seattlewiki.net or https://sfwiki.org
   
   // user and apikey not required for get requests
   // user: process.env.LOCALWIKI_USER,
