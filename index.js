@@ -129,6 +129,9 @@ LocalWikiClient.Type.of = function(name) {
   }
 }
 
+/*
+* Do something with each resource type on the wiki
+*/
 LocalWikiClient.prototype.eachType = function(callback){
   for (var id in LocalWikiClient.Type) {
     if (id !== 'of'){
