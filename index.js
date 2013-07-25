@@ -17,7 +17,7 @@ function LocalWikiResource(client, type, identifier) {
   if (!this.identifier && typeof this.type === "string" && this.type.indexOf("/api") === 0) {
     this.identifier = this.type.substr(this.type.indexOf('/', 5) + 1);
     var type = this.type.split("/")[2];
-    this.type = LocalWikiClient.Type.of(type);
+    this.type = LocalWikiClient.typeOf(type);
   }
   this.data = {};
 }
@@ -118,14 +118,23 @@ LocalWikiClient.Type = {
 /*
 * Get the LocalWikiClient Type with a given name.
 *
-* LocalWikiClient.Type.of('page');
+* LocalWikiClient.typeOf('page');
 */
-LocalWikiClient.Type.of = function(name) {
-  for (var id in LocalWikiClient.Type) {
-    var type = LocalWikiClient.Type[id];
+LocalWikiClient.prototype.typeOf = function(name) {
+  this.eachType(function(type){
     if (type.name && type.name == name) {
       return type;
     }
+  })
+}
+
+/*
+* Do something with each resource type on the wiki
+*/
+LocalWikiClient.prototype.eachType = function(callback){
+  for (var id in LocalWikiClient.Type) {
+    var type = LocalWikiClient.Type[id];
+    callback(type)
   }
 }
 
@@ -160,6 +169,21 @@ LocalWikiClient.prototype.list = function(options){
       if (options.success) return options.success(objects, data)
     }
     return response
+  })
+}
+
+/*
+* GET
+* get the total count of a resource type on the wiki
+*/
+
+LocalWikiClient.prototype.count = function(resourceType, callback){
+  request({
+    url: this.url + resourceType + '?' + qs.stringify({ limit: 1 })
+  },
+  function (error, response, body){
+    var data = JSON.parse(body);
+    callback(error, data.meta.total_count)
   })
 }
 
