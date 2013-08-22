@@ -4,12 +4,15 @@
   "description": "A node.js wrapper library to the localwiki api.",
   "repository": {
     "type": "git",
-    "url": "https://github.com/codeforseattle/node-localwiki-client.git" 
+    "url": "https://github.com/codeforseattle/node-localwiki-client.git"
   },
   "dependencies": {
-    "request": "~2.25.0"
+    "request": "~2.27.0",
+    "browser-request": "~0.2.1"
   },
   "devDependencies": {
+    "nock": "~0.22.1",
+    "tape": "~1.0.4"
   },
   "license": "MIT",
   "engines": {

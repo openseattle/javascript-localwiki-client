@@ -1,5 +1,10 @@
-var request = require('request')
 var qs = require('querystring')
+
+if (typeof module !== undefined){
+  var request = require('request')
+} else {
+  var request = require('browser-request')
+}
 
 module.exports = LocalWikiClient
 
@@ -98,6 +103,23 @@ function LocalWikiClient(options){
   this.url = options.url + (options.url.match('/$') ? '' : '/') + 'api/'
   this.user = options.user
   this.apikey = options.apikey
+  this.initialize(options.success);
+}
+
+LocalWikiClient.prototype.initialize = function(callback){
+  var self = this
+
+  this.fetch({
+    resource_type: LocalWikiClient.Type.SITE,
+    identifier: 1,
+    error: function(error, response, body){
+      throw new Error;
+    },
+    success: function(resource, response){
+      self.name = resource.data.name;
+      callback();
+    }
+  })
 }
 
 
