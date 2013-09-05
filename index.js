@@ -117,7 +117,7 @@ LocalWikiClient.prototype.initialize = function(callback){
     },
     success: function(resource, response){
       self.name = resource.data.name;
-      callback();
+      if (callback) { callback() }
     }
   })
 }
