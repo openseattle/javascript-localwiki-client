@@ -9,22 +9,22 @@ var lw = new LocalWikiClient({
 })
 
 // get the test test test page
-lw.fetch({
-  identifier: 'Help',
-  success: function(resource) {
-    console.log("page fetch data: ", resource.data.content)
-  }
-})
+lw.fetch({ identifier: 'Help' }, function(error, resource){
+  console.log("page fetch data: ", resource.data.content);
+});
 
 // get 5 pages
-lw.list({
+
+var options = {
   resource_type: LocalWikiClient.Type.PAGE,
   filters: {
     limit: 5
-  },
-  success: function(items) {
-    items.map(function(item) {
-      console.log("Top Page: " + item.data.slug)
-    });
   }
-})
+};
+
+lw.list(options, function(error, response) {
+  var items = response.objects;
+  items.map(function(item) {
+    console.log("Top Page: " + item.slug);
+  });
+});

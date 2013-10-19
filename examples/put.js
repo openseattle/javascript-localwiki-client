@@ -7,12 +7,9 @@ var lw = new LocalWikiClient({
 })
 
 // update the test test test page
-lw.fetch({
-  identifier: 'Emu',
-  success: function(resource) {
-    resource.data.content += "<br /> Updated at " + new Date()
-    resource.update(function() {
-      console.log("updated.")
-    })
-  }
-})
+lw.fetch({ identifier: 'Emu'}, function(error, resource) {
+  resource.data.content += "<br /> Updated at " + new Date();
+  resource.update(function() {
+    console.log("updated.")
+  });
+});
