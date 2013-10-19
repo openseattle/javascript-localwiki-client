@@ -94,7 +94,7 @@ LocalWikiClient.prototype.initialize = function(callback){
   this.fetch(options, function(error, response){
     if (error) return callback(error);
     self.name = response.data.name;
-    return callback(error, self);
+    if (callback) return callback(error, self);
   });
 }
 
