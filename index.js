@@ -1,10 +1,5 @@
 var qs = require('querystring')
-
-if (typeof module !== undefined){
-  var request = require('request')
-} else {
-  var request = require('browser-request')
-}
+var request = require('request')
 
 module.exports = LocalWikiClient
 
