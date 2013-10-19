@@ -1,7 +1,7 @@
-var qs = require('querystring')
-var request = require('request')
+var qs = require('querystring');
+var request = require('request');
 
-module.exports = LocalWikiClient
+module.exports = LocalWikiClient;
 
 
 /*
@@ -25,60 +25,40 @@ function LocalWikiResource(client, type, identifier) {
 
 /*
 * Update a resource to reflect local state.
-* client.fetch({
-*   identifier:'test',
-*   success: function(rsrc) {
-*     rsrc.data.content += "test";
-*     rsrc.update();
-*   }
-* })
 */
-LocalWikiResource.prototype.update = function(success, failure) {
+
+LocalWikiResource.prototype.update = function(callback) {
   var self = this;
-  request.put({
+
+  var options = {
     url: this.client.url + this.type.name + '/' + this.identifier,
     headers: {
       'Content-Type': 'application/json',
       'Authorization': 'ApiKey ' + this.client.user + ':' + this.client.apikey
     },
     body: JSON.stringify(this.data)
-  },
-  function (error, response, body) {
-    if (error && options.error && failure) failure(error, response, body);
-    if (response.statusCode == 204 && success) {
-      success(self, response, body);
-    }
-  });
+  }
+
+  request.put(options, callback);
 }
 
 
 /*
 * Delete a resource from the wiki.
-* client.list({
-*   success: function(rsrcs) {
-*     rsrcs.map(function(rsrc) {
-*       if (rsrc.content.indexOf("Delete This Page") !== false) {
-*         rsrc.delete();
-*       }
-*     });
-*   }
-* })
 */
-LocalWikiResource.prototype.delete = function(success, failure) {
+
+LocalWikiResource.prototype.delete = function(callback) {
   var self = this;
-  request.del({
+
+  var options = {
     url: this.client.url + this.type.name + '/' + this.identifier,
     headers: {
       'Content-Type': 'application/json',
       'Authorization': 'ApiKey ' + this.client.user + ':' + this.client.apikey
     }
-  },
-  function (error, response, body) {
-    if (error && options.error && failure) failure(error, response, body);
-    if (response.statusCode == 204 && success) {
-      success(self, response, body);
-    }
-  });
+  }
+
+  request.del(options, callback);
 }
 
 
@@ -91,36 +71,37 @@ LocalWikiResource.prototype.delete = function(success, failure) {
 *   url: 'http://seattlewiki.net',
 *   user: process.env.LOCALWIKI_USER,
 *   apikey: process.env.LOCALWIKI_API_KEY
-* })
+* });
 */
-function LocalWikiClient(options){
-  if (!options) options = {}
-  this.url = options.url + (options.url.match('/$') ? '' : '/') + 'api/'
-  this.user = options.user
-  this.apikey = options.apikey
-  this.initialize(options.success);
+
+function LocalWikiClient(options, callback){
+  if (!options) options = {};
+  this.url = options.url + (options.url.match('/$') ? '' : '/') + 'api/';
+  this.user = options.user;
+  this.apikey = options.apikey;
+  this.initialize(callback);
 }
 
 LocalWikiClient.prototype.initialize = function(callback){
-  var self = this
+  var self = this;
 
-  this.fetch({
+  var options = {
     resource_type: LocalWikiClient.Type.SITE,
-    identifier: 1,
-    error: function(error, response, body){
-      throw new Error;
-    },
-    success: function(resource, response){
-      self.name = resource.data.name;
-      if (callback) { callback() }
-    }
-  })
+    identifier: 1
+  };
+
+  this.fetch(options, function(error, response){
+    if (error) return callback(error);
+    self.name = response.data.name;
+    return callback(error, self);
+  });
 }
 
 
 /*
 * Types of resources understood by LocalWiki.
 */
+
 LocalWikiClient.Type = {
   FILE: {name: 'file', versioned: true},
   MAP: {name: 'map', versioned: true},
@@ -137,6 +118,7 @@ LocalWikiClient.Type = {
 *
 * LocalWikiClient.Type.of('page');
 */
+
 LocalWikiClient.Type.of = function(name) {
   for (var id in LocalWikiClient.Type) {
     var type = LocalWikiClient.Type[id];
@@ -146,9 +128,11 @@ LocalWikiClient.Type.of = function(name) {
   }
 }
 
+
 /*
 * Do something with each resource type on the wiki
 */
+
 LocalWikiClient.prototype.eachType = function(callback){
   for (var id in LocalWikiClient.Type) {
     if (id !== 'of'){
@@ -156,21 +140,15 @@ LocalWikiClient.prototype.eachType = function(callback){
       callback(type);      
     }
   }
-}
+};
+
 
 /*
 * GET
 * request a list of resources
-
-options = {
-  resource_type: LocalWikiClient.Type,
-  filters: {},
-  success: function([LocalWikiResource]){},
-  error: function(){}
-}
-
 */
-LocalWikiClient.prototype.list = function(options){
+
+LocalWikiClient.prototype.list = function(options, callback){
   var type = options.resource_type || LocalWikiClient.Type.PAGE;
   var self = this;
   
@@ -178,7 +156,7 @@ LocalWikiClient.prototype.list = function(options){
     url: this.url + type.name + '?' + qs.stringify(options.filters)
   },
   function (error, response, body) {
-    if (error && options.error) options.error(error, response, body)
+    if (error && options.error) return callback(error, response, body)
     if (response.statusCode == 200) {
       var data = JSON.parse(body);
       var objects = data.objects.map(function(resource) {
@@ -186,108 +164,86 @@ LocalWikiClient.prototype.list = function(options){
         obj.data = resource;
         return obj;
       });
-      if (options.success) return options.success(objects, data)
+      return callback(objects, data);
     }
-    return response
-  })
-}
+  });
+};
+
 
 /*
 * GET
 * get the total count of a resource type on the wiki
 */
 
-LocalWikiClient.prototype.count = function(resourceType, fn){
+LocalWikiClient.prototype.count = function(resourceType, callback){
   request({
     url: this.url + resourceType + '?' + qs.stringify({ limit: 1 })
   },
   function (error, response, body){
     var data = JSON.parse(body);
-    fn(error, data.meta.total_count)
-  })
-}
+    callback(error, data.meta.total_count);
+  });
+};
+
 
 /*
 * GET
 * request a single resource from a known identifier.
-*
-* options = {
-*   resource_type: LocalWikiClient.Type,
-*   identifier: "",
-*   success: function(){},
-*   error: function(){}
-* }
-*
 */
-LocalWikiClient.prototype.fetch = function(options){
+
+LocalWikiClient.prototype.fetch = function(options, callback){
   var type = options.resource_type || LocalWikiClient.Type.PAGE;
   var identifier = options.identifier;
   var obj = new LocalWikiResource(this, type, identifier);
 
-  request({
-    url: this.url + type.name + '/' + identifier
-  },
-  function (error, response, body) {
-    if (error && options.error) options.error(error, response, body)
+  var options = { url: this.url + type.name + '/' + identifier };
+
+  request(options, function (error, response, body) {
+    if (error) return callback(error, response);
     if (response.statusCode == 200) {
       obj.data = JSON.parse(body);
-      if (options.success) options.success(obj, response)
+      return callback(error, obj);
     }
-    return response
   });
-
-  return obj;
 }
+
 
 /*
 * POST
 * create a resource
-
-options = {
-  resource_type: "",
-  data: {},
-  success: function(){},
-  error: function(){}
-}
-
 */
-LocalWikiClient.prototype.create = function(options){
+
+LocalWikiClient.prototype.create = function(options, callback){
   var type = options.resource_type || LocalWikiClient.Type.PAGE;
-  request.post({
+
+  var options = {
     url: this.url + type.name + '/',
     headers: {
       'Content-Type': 'application/json',
       'Authorization': 'ApiKey ' + this.user + ':' + this.apikey
     },
     body: JSON.stringify(options.data)
-  },
-  function (error, response, body) {
-    if (error && options.error) options.error(error, response, body)
+  };
+
+  request.post(options, function (error, response, body) {
+    if (error) return callback(error, response, body);
     if (response.statusCode == 201) {
-      var location = response.headers['location']
-      var resource = new LocalWikiResource(this, "/api/" + location.split(this.url)[1])
-      resource.data = options.data
-      if (options.success) options.success(resource, response, body)
+      var location = response.headers['location'];
+      var resource = new LocalWikiResource(this, "/api/" + location.split(this.url)[1]);
+      resource.data = options.data;
+      return callback(error, resource);
     }
-    return response
-  }.bind(this))
+  });
 }
 
 
 /*
 * DELETE
 * Remove a single resource by its identifier.
-*
-* options = {
-*   resource_type: LocalWikiClient.Type,
-*   identifier: "",
-*   success: function(){},
-*   error: function(){}
-* }
-*
 */
-LocalWikiClient.prototype.delete = function(options) {
+
+LocalWikiClient.prototype.delete = function(options, callback) {
   var type = options.resource_type || LocalWikiClient.Type.PAGE;
   var resource = new LocalWikiResource(this, type, options.identifier);
-  resource.delete(options.success, options.error);
-}
+  resource.delete(callback);
+};

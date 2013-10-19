@@ -6,10 +6,11 @@ var test = require('tape');
 test('creating a wiki instance', function(t){
   t.plan(1);
 
-  var wiki = new LocalWikiClient({
+  var siteOptions = {
     url: 'http://seattlewiki.net',
-    success: function(){
-      t.equal(wiki.name, 'SeattleWiki');
-    }
+  };
+
+  var wiki = new LocalWikiClient(siteOptions, function(){
+    t.equal(wiki.name, 'SeattleWiki');
   });
 });
