@@ -21,7 +21,7 @@ var wiki = new LocalWikiClient({
   // user and apikey not required for get requests
   user: process.env.LOCALWIKI_USER,
   apikey: process.env.LOCALWIKI_API_KEY
-})
+});
 ````
 
 **create a page named Waterside Park**
@@ -31,34 +31,27 @@ wiki.create({
   data: {
     'name': "Waterside Park",
     'content': "A simple test page."
-  },
-  success: function(resource) {
-    console.log("Created new page", resource.identifier)
   }
-})
+}, function(error, resource) {
+  console.log("Created new page", resource.identifier);
+});
 ````
 
 **get a resource**
 ````
-wiki.fetch({
-  identifier: 'WatersidePark',
-  success: function(resource) {
-    console.log("page data: ", resource.data.content)
-  }
-})
+wiki.fetch({ identifier: 'WatersidePark' }, function(error, resource) {
+  console.log("page data: ", resource.data.content);
+});
 ````
 
 **update a page**
 ````
-wiki.fetch({
-  identifier: 'WatersidePark',
-  success: function(resource) {
-    resource.data.content += "<br /> Updated at " + new Date()
-    resource.update(function() {
-      console.log("Success");
-    })
-  }
-})
+wiki.fetch({ identifier: 'WatersidePark' }, function(error, resource) {
+  resource.data.content += "<br /> Updated at " + new Date();
+  resource.update(function() {
+    console.log("Success");
+  });
+});
 ````
 
 **delete a page**
@@ -75,7 +68,7 @@ wiki.list({
   filters: {
     limit: 5
   },
-  success: function(items) {
+  function(error, items) {
     console.log("found " + items.length + " matching pages.")
   }
 })
