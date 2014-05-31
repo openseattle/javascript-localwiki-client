@@ -10,7 +10,7 @@ function LocalWikiClient (options, cb) {
   this.url = this.host + '/api/' + this.apiVersion + '/';
   this.user = options.user;
   this.apiKey = options.apiKey;
-  this.region = options.region || '';
+  this.region = options.region;
 
   this.regions = require('./regions')(this);
   this.region = this.regions().region.bind(this.regions());
@@ -50,10 +50,10 @@ LocalWikiClient.prototype.req = function req (type, id, options, cb) {
   options.headers = { 'Content-Type': 'application/json' };
   options.method = type;
   options.json = true;
-  options.qs = options.filter;
+  options.qs = options.filter || {};
   options.qs.format = 'json';
 
-  if (this.region && !options.gs.region) options.qs.region = this.region;
+  if (this.region && !options.qs.region) options.qs.region = this.region;
   
   if (type !== 'get' && this.client) {
     options.headers['Authorization'] = 'ApiKey ' + this.client.user + ':' + this.client.apikey
@@ -64,6 +64,7 @@ LocalWikiClient.prototype.req = function req (type, id, options, cb) {
   function getResponse (error, response, body){
     if (cb) {
       if (error) return cb(error);
+      if (body.detail === 'Not found') return cb(body);
       return cb(null, body);
     }
   }

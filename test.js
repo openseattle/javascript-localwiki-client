@@ -1,21 +1,20 @@
 var LocalWikiClient = require('./index');
-//var nock = require('nock');
 var test = require('tape');
 
 test('creating a wiki instance', function(t){
   t.plan(1);
 
   var wiki = new LocalWikiClient({}, function(err, res){
-    console.log(err, res);
+    t.ok(res);
   });
 });
 
 test('fetching a page', function(t){
-  t.plan(2);
+  t.plan(1);
 
-  wiki.fetch('page', 'Help', function(err, res){
-    console.log(err, res);
+  var wiki = new LocalWikiClient();
+
+  wiki.page('54886', function(err, res){
     t.ok(res);
-    t.equal(res.data.name, 'Help');
   });
 });
