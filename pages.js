@@ -1,3 +1,4 @@
+var inherits = require('inherits');
 var Resource = require('./resource');
 
 module.exports = function (client) {
@@ -10,17 +11,12 @@ function PagesResource (client) {
   };
 }
 
+inherits(Pages, Resource);
+
 function Pages (client, id, options, cb) {
   this.client = client;
-  if (typeof id === 'string') return this.single(id, options, cb)
-  else if (id) return this.list(id, options);
-  else return this;
+  this.type = 'pages';
+  return this.init(id, options, cb);
 }
 
-Pages.prototype.list = function (options, cb) {
-  this.client.req('get', 'pages', options, cb);
-};
-
-Pages.prototype.page = function (id, options, cb) {
-  this.client.req('get', 'pages/' + id, options, cb);
-};
+Pages.prototype.page = Pages.prototype.single;

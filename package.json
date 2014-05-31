@@ -14,7 +14,8 @@
     "request": "^2.27.0",
     "browser-request": "~0.2.1",
     "extend": "^1.2.1",
-    "tape": "^2.13.1"
+    "tape": "^2.13.1",
+    "inherits": "^2.0.1"
   },
   "devDependencies": {
     "nock": "~0.22.1",

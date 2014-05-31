@@ -12,8 +12,23 @@ function LocalWikiClient (options, cb) {
   this.apiKey = options.apiKey;
   this.region = options.region || '';
 
+  this.regions = require('./regions')(this);
+  this.region = this.regions().region.bind(this.regions());
+
   this.pages = require('./pages')(this);
   this.page = this.pages().page.bind(this.pages());
+
+  this.maps = require('./maps')(this);
+  this.map = this.maps().map.bind(this.maps());
+
+  this.users = require('./users')(this);
+  this.user = this.users().user.bind(this.users());
+
+  this.files = require('./files')(this);
+  this.file = this.files().file.bind(this.files());
+
+  this.redirects = require('./redirects')(this);
+  this.redirect = this.redirects().redirect.bind(this.redirects());
 
   if (cb) this.apiRoot(cb);
 }
@@ -35,9 +50,10 @@ LocalWikiClient.prototype.req = function req (type, id, options, cb) {
   options.headers = { 'Content-Type': 'application/json' };
   options.method = type;
   options.json = true;
-  options.qs = {
-    format: 'json'
-  };
+  options.qs = options.filter;
+  options.qs.format = 'json';
+
+  if (this.region && !options.gs.region) options.qs.region = this.region;
   
   if (type !== 'get' && this.client) {
     options.headers['Authorization'] = 'ApiKey ' + this.client.user + ':' + this.client.apikey
