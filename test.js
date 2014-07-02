@@ -9,12 +9,33 @@ test('creating a wiki instance', function(t){
   });
 });
 
+
 test('fetching a page', function(t){
   t.plan(1);
 
   var wiki = new LocalWikiClient();
 
-  wiki.page('54886', function(err, res){
+  wiki.fetch('pages', '54886', function(err, res){
+    t.ok(res);
+  });
+});
+
+test('list of pages', function(t){
+  t.plan(1);
+
+  var wiki = new LocalWikiClient();
+
+  wiki.list('pages', function(err, res){
+    t.ok(res);
+  });
+});
+
+test('list of pages from seattle', function(t){
+  t.plan(1);
+
+  var wiki = new LocalWikiClient();
+
+  wiki.list('pages', { region__slug: 'seattle' }, function(err, res){
     t.ok(res);
   });
 });
