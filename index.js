@@ -9,64 +9,60 @@ function LocalWikiClient (options, cb) {
   this.host = options.host || 'http://localwiki.net';
   this.apiVersion = options.apiVersion || 'v4';
   this.url = this.host + '/api/' + this.apiVersion + '/';
-  this.user = options.user;
   this.apiKey = options.apiKey;
-  this.region = options.region;
 
   if (cb) this.apiRoot(cb);
 }
 
 LocalWikiClient.prototype.apiRoot = function (cb) {
-  this._request('get', '', function(err, res){
-    if (err) return cb(err);
-    return cb(null, res);
-  });
+  this._request('get', '', cb);
 };
 
-LocalWikiClient.prototype.list = function (resource, options, cb) {
-  this._request('get', resource, options, cb);
+LocalWikiClient.prototype.list = function (resource, params, cb) {
+  this._request('get', resource, params, cb);
 };
 
-LocalWikiClient.prototype.fetch = function (resource, id, options, cb) {
-  this._request('get', resource + '/' + id, options, cb);
+LocalWikiClient.prototype.fetch = function (resource, id, params, cb) {
+  this._request('get', resource + '/' + id, params, cb);
 };
 
-LocalWikiClient.prototype.create = function (resource, options, cb) {
-  this._request('post', resource, options, cb);
+LocalWikiClient.prototype.create = function (resource, params, cb) {
+  this._request('post', resource, params, cb);
 }
 
-LocalWikiClient.prototype.update = function (resource, id, options, cb) {
-  this._request('put', resource + '/' + id, options, cb);
+LocalWikiClient.prototype.update = function (resource, id, params, cb) {
+  this._request('put', resource + '/' + id, params, cb);
 }
 
-LocalWikiClient.prototype.destroy = function (resource, id, options, cb) {
-  this._request('delete', resource + '/' + id, options, cb);
+LocalWikiClient.prototype.destroy = function (resource, id, params, cb) {
+  this._request('delete', resource + '/' + id, params, cb);
 }
 
 LocalWikiClient.prototype._request = function (type, resource, params, cb) {
   if (typeof params === 'function') {
-    var cb = params;
-    var params = {};
+    cb = params;
+    params = {};
   }
 
   var options = {};
-  options.url = this.fullUrl(resource, params);
   options.headers = { 'Content-Type': 'application/json' };
-  options.method = type;
-  options.json = true;
 
-  if (type !== 'get' && this.client) {
-    options.headers['Authorization'] = 'ApiKey ' + this.client.user + ':' + this.client.apikey
+  if (type !== 'get') {
+    options.body = JSON.stringify(params);
+    options.headers['Authorization'] = 'Token ' + this.apiKey;
+    params = null;
   }
 
-  if (this.region && !options.body.region) options.body.region = this.region;
+  options.url = this.fullUrl(resource, params);
+  options.method = type;
+  options.json = true;
 
   request(options, getResponse);
 
   function getResponse (error, response, body){
     if (cb) {
       if (error) return cb(error);
-      if (response.statusCode >= 404) return cb(response);
+      if (response.statusCode >= 400) return cb(response);
       if (body.detail === 'Not found') return cb(body);
       return cb(null, body);
     }
@@ -74,6 +70,8 @@ LocalWikiClient.prototype._request = function (type, resource, params, cb) {
 };
 
 LocalWikiClient.prototype.fullUrl = function (resource, params) {
-  var resource = resource || '';
-  return this.url + resource + '/' + '?' + qs.stringify(params);
+  var frag = resource.length > 0 ? resource + '/' : '';
+  if (this.region && params && !params.region) params.region = this.region;
+  frag += params ? '?' + qs.stringify(params) : '';
+  return this.url + frag;
 };
