@@ -1,25 +1,11 @@
 #node-localwiki-client
-A simple node.js wrapper for the [localwiki](http://github.com/localwiki) [api](http://localwiki.readthedocs.org/en/latest/api.html).
+A simple javascript wrapper for the [localwiki](http://github.com/localwiki) [api](http://localwiki.readthedocs.org/en/latest/api.html).
 
 ##Installation:
 ````
-npm install node-localwiki-client
+npm install codeforseattle/node-localwiki-client
 ````
 
-##Examples:
+Works in node or the browser using browserify. Or use the localwiki-client.min.js file.
 
-var LocalWikiClient = require('../');
-
-var wiki = new LocalWikiClient({}, function(err, res){
-  console.log(err, res);
-});
-
-
-var LocalWikiClient = require('../');
-
-var wiki = new LocalWikiClient();
-
-wiki.files(function(err, res){
-  console.log(err, res);
-});
-
+For examples see the test.js file.
