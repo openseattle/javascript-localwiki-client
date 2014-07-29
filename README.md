@@ -1,5 +1,5 @@
 # javascript localwiki client
-A simple javascript wrapper for the [localwiki](http://github.com/localwiki) [api](http://localwiki.readthedocs.org/en/latest/api.html).
+A simple javascript wrapper for the [localwiki api](http://localwiki.net/api).
 
 ## Installation:
 
