@@ -1,5 +1,5 @@
 {
-  "name": "node-localwiki-client",
+  "name": "localwiki-client",
   "version": "0.3.0",
   "description": "A node.js wrapper library to the localwiki api.",
   "repository": {
