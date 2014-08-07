@@ -10,6 +10,7 @@ function LocalWikiClient (options, cb) {
   this.apiVersion = options.apiVersion || 'v4';
   this.url = this.host + '/api/' + this.apiVersion + '/';
   this.apiKey = options.apiKey;
+  this.region = options.region;
 
   if (cb) this.apiRoot(cb);
 }
@@ -70,8 +71,9 @@ LocalWikiClient.prototype._request = function (type, resource, params, cb) {
 };
 
 LocalWikiClient.prototype.fullUrl = function (resource, params) {
+  params || (params = {});
   var frag = resource.length > 0 ? resource + '/' : '';
-  if (this.region && params && !params.region) params.region = this.region;
+  params.region = params.region || this.region;
   frag += params ? '?' + qs.stringify(params) : '';
   return this.url + frag;
 };

@@ -53,22 +53,24 @@ test('create, update, and delete a page', function(t) {
 
   var wiki = new LocalWikiClient({
     host: 'http://localhost:8082',
-    apiKey: 'c6d4b07ec62afbb8b173939d8c09ffbc9cc3200f'
+    apiKey: '98419472f6010545001f5512f4a5c1f42d24df64'
   });
 
-  var page = { 
-    name: 'wooo a page', 
-    content: 'this is definitely a page.', 
-    region: 'http://localhost:8082/api/v4/regions/2/' 
+  var page = {
+    name: 'wooo a page',
+    content: 'this is definitely a page.',
+    region: 'http://localhost:8082/api/v4/regions/2/'
   };
 
   wiki.create('pages', page, function(err, res) {
     t.ok(res);
+    console.log(err)
     page.content += ' wooooooooooo.';
     wiki.update('pages', getID(res.url), page, function(uerr, ures) {
       t.ok(ures);
-      wiki.destroy('pages', getID(res.url), function(err, res){
-        t.ok(res);
+      wiki.destroy('pages', getID(res.url), function(derr, dres){
+        console.log(derr.statusCode)
+        t.ok(dres);
       });
     });
   });
