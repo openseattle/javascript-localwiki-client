@@ -6,7 +6,7 @@ module.exports = LocalWikiClient;
 function LocalWikiClient (options, cb) {
   if (!(this instanceof LocalWikiClient)) return new LocalWikiClient(opts);
   options || (options = {});
-  this.host = options.host || 'http://localwiki.net';
+  this.host = options.host || 'https://localwiki.org';
   this.apiVersion = options.apiVersion || 'v4';
   this.url = this.host + '/api/' + this.apiVersion + '/';
   this.apiKey = options.apiKey;
