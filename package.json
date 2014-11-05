@@ -1,7 +1,7 @@
 {
   "name": "localwiki-client",
-  "version": "0.3.0",
-  "description": "A node.js wrapper library to the localwiki api.",
+  "version": "0.3.1",
+  "description": "A javascript api client for localwiki.org that works on the server & browser.",
   "repository": {
     "type": "git",
     "url": "https://github.com/codeforseattle/javascript-localwiki-client.git"

@@ -69,7 +69,6 @@ test('create, update, and delete a page', function(t) {
     wiki.update('pages', getID(res.url), page, function(uerr, ures) {
       t.ok(ures);
       wiki.destroy('pages', getID(res.url), function(derr, dres){
-        console.log(derr.statusCode)
         t.ok(dres);
       });
     });
