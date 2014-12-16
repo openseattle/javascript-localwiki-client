@@ -58,7 +58,7 @@ LocalWikiClient.prototype._request = function (type, resource, params, cb) {
   options.method = type;
   options.json = true;
 
-  request(options, getResponse);
+  return request(options, getResponse);
 
   function getResponse (error, response, body){
     if (cb) {
