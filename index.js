@@ -11,32 +11,32 @@ function LocalWikiClient (options, cb) {
   this.url = this.host + '/api/' + this.apiVersion + '/';
   this.apiKey = options.apiKey;
   this.region = options.region;
-
+  
   if (cb) this.apiRoot(cb);
 }
 
 LocalWikiClient.prototype.apiRoot = function (cb) {
-  this._request('get', '', cb);
+  return this._request('get', '', cb);
 };
 
 LocalWikiClient.prototype.list = function (resource, params, cb) {
-  this._request('get', resource, params, cb);
+  return this._request('get', resource, params, cb);
 };
 
 LocalWikiClient.prototype.fetch = function (resource, id, params, cb) {
-  this._request('get', resource + '/' + id, params, cb);
+  return this._request('get', resource + '/' + id, params, cb);
 };
 
 LocalWikiClient.prototype.create = function (resource, params, cb) {
-  this._request('post', resource, params, cb);
+  return this._request('post', resource, params, cb);
 }
 
 LocalWikiClient.prototype.update = function (resource, id, params, cb) {
-  this._request('put', resource + '/' + id, params, cb);
+  return this._request('put', resource + '/' + id, params, cb);
 }
 
 LocalWikiClient.prototype.destroy = function (resource, id, params, cb) {
-  this._request('delete', resource + '/' + id, params, cb);
+  return this._request('delete', resource + '/' + id, params, cb);
 }
 
 LocalWikiClient.prototype._request = function (type, resource, params, cb) {
@@ -44,22 +44,23 @@ LocalWikiClient.prototype._request = function (type, resource, params, cb) {
     cb = params;
     params = {};
   }
-
+  
   var options = {};
   options.headers = { 'Content-Type': 'application/json' };
-
+  
   if (type !== 'get') {
     options.body = JSON.stringify(params);
     options.headers['Authorization'] = 'Token ' + this.apiKey;
     params = null;
   }
-
+  
   options.url = this.fullUrl(resource, params);
   options.method = type;
   options.json = true;
-
-  return request(options, getResponse);
-
+  
+  if (!cb) return request(options);
+  else return request(options, getResponse);
+  
   function getResponse (error, response, body){
     if (cb) {
       if (error) return cb(error);
