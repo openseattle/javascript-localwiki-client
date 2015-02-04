@@ -63,8 +63,8 @@ test('create, update, and delete a page', function(t) {
   };
 
   wiki.create('pages', page, function(err, res) {
+    t.notOk(err);
     t.ok(res);
-    console.log(err)
     page.content += ' wooooooooooo.';
     wiki.update('pages', getID(res.url), page, function(uerr, ures) {
       t.ok(ures);

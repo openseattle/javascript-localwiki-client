@@ -64,7 +64,7 @@ LocalWikiClient.prototype._request = function (type, resource, params, cb) {
   function getResponse (error, response, body){
     if (cb) {
       if (error) return cb(error);
-      if (response.statusCode >= 400) return cb(response);
+      if (response.statusCode >= 400) return cb(body);
       if (body.detail === 'Not found') return cb(body);
       return cb(null, body);
     }
