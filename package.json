@@ -8,7 +8,7 @@
   },
   "scripts": {
     "test": "node test.js",
-    "build-umd": "browserify index.js --standalone LocalWiki | uglifyjs -c > localwiki-client.min.js"
+    "build": "browserify index.js --standalone LocalWiki | uglifyjs -c > localwiki-client.min.js"
   },
   "dependencies": {
     "request": "^2.27.0",

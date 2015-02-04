@@ -4,7 +4,7 @@ var qs = require('querystring');
 module.exports = LocalWikiClient;
 
 function LocalWikiClient (options, cb) {
-  if (!(this instanceof LocalWikiClient)) return new LocalWikiClient(opts);
+  if (!(this instanceof LocalWikiClient)) return new LocalWikiClient(options, cb);
   options || (options = {});
   this.host = options.host || 'https://localwiki.org';
   this.apiVersion = options.apiVersion || 'v4';
